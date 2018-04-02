@@ -49,6 +49,7 @@
             // 
             // pictureBoxSnake1
             // 
+            this.pictureBoxSnake1.BackColor = System.Drawing.Color.White;
             this.pictureBoxSnake1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBoxSnake1.Location = new System.Drawing.Point(12, 12);
             this.pictureBoxSnake1.Name = "pictureBoxSnake1";
@@ -58,6 +59,7 @@
             // 
             // pictureBoxSnake2
             // 
+            this.pictureBoxSnake2.BackColor = System.Drawing.Color.White;
             this.pictureBoxSnake2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBoxSnake2.Location = new System.Drawing.Point(410, 12);
             this.pictureBoxSnake2.Name = "pictureBoxSnake2";
@@ -215,6 +217,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "MainMenu";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.MainMenu_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSnake1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSnake2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSpeed1)).EndInit();
