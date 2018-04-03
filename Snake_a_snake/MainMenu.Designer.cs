@@ -215,9 +215,11 @@
             this.Controls.Add(this.pictureBoxSnake2);
             this.Controls.Add(this.pictureBoxSnake1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.KeyPreview = true;
             this.Name = "MainMenu";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.MainMenu_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainMenu_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSnake1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSnake2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSpeed1)).EndInit();
@@ -229,19 +231,19 @@
 
         #endregion
 
-        private System.Windows.Forms.PictureBox pictureBoxSnake1;
-        private System.Windows.Forms.PictureBox pictureBoxSnake2;
-        private System.Windows.Forms.CheckBox checkBoxWall1;
-        private System.Windows.Forms.NumericUpDown numericUpDownSpeed1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBoxScore1;
-        private System.Windows.Forms.TextBox textBoxSumScore;
-        private System.Windows.Forms.TextBox textBoxScore2;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.NumericUpDown numericUpDownSpeed2;
-        private System.Windows.Forms.CheckBox checkBoxWall2;
-        private System.Windows.Forms.Button buttonStart;
-        private System.Windows.Forms.Button buttonReset;
+        public System.Windows.Forms.PictureBox pictureBoxSnake1;
+        public System.Windows.Forms.PictureBox pictureBoxSnake2;
+        public System.Windows.Forms.CheckBox checkBoxWall1;
+        public System.Windows.Forms.NumericUpDown numericUpDownSpeed1;
+        public System.Windows.Forms.Label label1;
+        public System.Windows.Forms.TextBox textBoxScore1;
+        public System.Windows.Forms.TextBox textBoxSumScore;
+        public System.Windows.Forms.TextBox textBoxScore2;
+        public System.Windows.Forms.Label label2;
+        public System.Windows.Forms.NumericUpDown numericUpDownSpeed2;
+        public System.Windows.Forms.CheckBox checkBoxWall2;
+        public System.Windows.Forms.Button buttonStart;
+        public System.Windows.Forms.Button buttonReset;
     }
 }
 

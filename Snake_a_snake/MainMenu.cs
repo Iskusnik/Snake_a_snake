@@ -13,6 +13,7 @@ namespace Snake_a_snake
 {
     public partial class MainMenu : Form
     {
+        SnakeControl Snakes;
         public MainMenu()
         {
             InitializeComponent();
@@ -26,8 +27,12 @@ namespace Snake_a_snake
             pictureBoxSnake1.Image = b;
             SolidBrush brush = new SolidBrush(Color.DarkBlue);*/
             
-            SnakeControl snakes = new SnakeControl(pictureBoxSnake1, pictureBoxSnake2);
-            snakes.DrawLeftSnake();
+            Snakes.DrawLeftSnake();
+            this.KeyDown += Snakes.LeftSnakeControl;
+            this.Focus();
+            /*
+            Thread temp = new Thread(snakes.StartLeftSnake);
+            temp.Start();*/
         }
 
         private void MainMenu_Load(object sender, EventArgs e)
@@ -37,6 +42,16 @@ namespace Snake_a_snake
             Bitmap b = new Bitmap(300, 400);
             pictureBoxSnake1.Image = a;
             pictureBoxSnake2.Image = b;
+
+            int SpeedLeft = (int)numericUpDownSpeed1.Value;
+            int SpeedRight = (int)numericUpDownSpeed2.Value;
+            Snakes = new SnakeControl(pictureBoxSnake1, pictureBoxSnake2, SpeedLeft, SpeedRight);
+
+        }
+
+        private void MainMenu_KeyDown(object sender, KeyEventArgs e)
+        {
+           // Snakes.LeftSnakeControl(sender, e);
         }
     }
 }

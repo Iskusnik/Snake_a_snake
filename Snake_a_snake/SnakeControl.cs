@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
+using System.Timers;
 
 namespace Snake_a_snake
 {
@@ -13,30 +14,27 @@ namespace Snake_a_snake
     //Bitmap snake;
     class SnakeControl
     {
-        public static Pen GreenPen = new Pen(Color.ForestGreen, 5);
-        public static Pen BlackPen = new Pen(Color.Black, 3);
+        public static Pen GreenPen = new Pen(Color.ForestGreen, 0);
+        public static Pen BlackPen = new Pen(Color.Black, 0);
         public static TextureBrush SnakeBody = new TextureBrush(Image.FromFile(@"C:\Users\IskusnikXD\Source\Repos\Snake_a_snake\Snake_a_snake\LEATHERSNAKE.jpeg"));
         public static TextureBrush SnakeHead = new TextureBrush(Image.FromFile(@"C:\Users\IskusnikXD\Source\Repos\Snake_a_snake\Snake_a_snake\SNAKEHEAD.jpeg"));
-
+        public int LeftSpeed, RightSpeed;
         PictureBox LeftPicture, RightPicture;
         Snake LSnake, RSnake;
-        public enum Move { Up = 0, Down = 1, Left = 2, Right = 3};
-        public SnakeControl(PictureBox leftField, PictureBox rightField)
+        public SnakeControl(PictureBox leftField, PictureBox rightField, int SpeedLeft, int SpeedRight)
         {
             LeftPicture = leftField;
             RightPicture = rightField;
             LSnake = new Snake();
-           // LSnake
-        }
-        public void LeftSnakeControl(object sender, KeyEventArgs e)
-        {
-            if (e.KeyData == Keys.W) ;
-            if (e.KeyData == Keys.A) ;
-            if (e.KeyData == Keys.S) ;
-            if (e.KeyData == Keys.D) ;
-            
-        }
 
+            LeftSpeed = 1000;
+            RightSpeed = 1000;
+
+            LeftSpeed /= SpeedLeft;
+            SpeedRight /= SpeedRight;
+        }
+        
+        
         #region Отображение
         static Bitmap DrawSnake(Bitmap bitmap, Snake snake)
         {
@@ -59,6 +57,7 @@ namespace Snake_a_snake
 
             draw.DrawRectangle(Pens.White, snake.Body[snake.Body.Count - 1].Segment);
             draw.FillRectangle(Brushes.White, snake.Body[snake.Body.Count - 1].Segment);
+            draw.Dispose();
             return bitmap;
         }
 
@@ -79,7 +78,52 @@ namespace Snake_a_snake
             RightPicture.Image = EraseSnake(new Bitmap(RightPicture.Image), RSnake);
         }
         #endregion
+        #region Обработка ввода клавиш
+        public void LeftSnakeControl(object sender, KeyEventArgs e)
+        {
+            if (e.KeyData == Keys.W && LSnake.Way != (int)Snake.Direction.Down)
+                LSnake.Way = (int)Snake.Direction.Up;
 
+            if (e.KeyData == Keys.A && LSnake.Way != (int)Snake.Direction.Right)
+                LSnake.Way = (int)Snake.Direction.Left;
+
+            if (e.KeyData == Keys.S && LSnake.Way != (int)Snake.Direction.Up)
+                LSnake.Way = (int)Snake.Direction.Down;
+
+            if (e.KeyData == Keys.D && LSnake.Way != (int)Snake.Direction.Left)
+                LSnake.Way = (int)Snake.Direction.Right;
+            StartLeftSnake(null);
+        }
+        #endregion
+        #region Поток
+        public void StartLeftSnake(object data)
+        {
+            //1. Обработка KeyEvent (нажатие кнопки): 
+            //1.1 - изменение направления, 
+            //1.2 - проверка на столкновения, 
+            //1.3 - проверка на скушанье,
+            //1.4 - увеличение роста.
+
+            //Загнать в цикл???
+            //System.Timers.Timer timer = new System.Timers.Timer(100 / (int)form.numericUpDownSpeed1.Value);
+            //timer.Elapsed+=
+            //2. Таймер (?): 2.1. Истёк. 2.2. Движение.
+
+            //3. Стереть старую змейку.
+            //4. Нарисовать новую.
+            /* while (true)
+             { 
+                 Thread.Sleep(LeftSpeed);
+                 EraseLeftSnake();
+                 LSnake.Move();
+                 DrawLeftSnake();
+             }*/
+            EraseLeftSnake();
+            LSnake.Move();
+            DrawLeftSnake();
+        }
+        
+        #endregion
     }
 
     class Snake
@@ -87,18 +131,39 @@ namespace Snake_a_snake
 
         static int width = 20;
 
+        public enum Direction { Up = 0, Down = 1, Left = 2, Right = 3 };
+        public int Way;
         public List<SnakeSegment> Body;
         
         public Snake()
         {
             int x = 40;
             int y = 40;
-
+            Way = (int)Direction.Right;
             Body = new List<SnakeSegment>(100);
 
             for (int i = 0; i < 5; i++)
                 Body.Add(new SnakeSegment(x, y + i * 20, width));
         }
+
+        public void Move()
+        {
+            for (int i = Body.Count - 1; i > 0; i--)
+            {
+                Body[i].Segment.X = Body[i - 1].Segment.X;
+                Body[i].Segment.Y = Body[i - 1].Segment.Y;
+            }
+            switch (Way)
+            {
+                case (int)Direction.Up:    Body[0].Up();    break;
+                case (int)Direction.Down:  Body[0].Down();  break;
+                case (int)Direction.Left:  Body[0].Left();  break;
+                case (int)Direction.Right: Body[0].Right(); break;
+            }
+            
+        }
+        
+        
     }
 
     class SnakeSegment
@@ -112,19 +177,19 @@ namespace Snake_a_snake
         }
         public void Up()
         {
-            Segment.Y--;
+            Segment.Y -= Segment.Width;
         }
         public void Left()
         {
-            Segment.X--;
+            Segment.X -= Segment.Width;
         }
         public void Down()
         {
-            Segment.Y++;
+            Segment.Y += Segment.Width;
         }
         public void Right()
         {
-            Segment.X++;
+            Segment.X += Segment.Width;
         }
     }
 }
