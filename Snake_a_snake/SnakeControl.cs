@@ -25,46 +25,57 @@ namespace Snake_a_snake
         PictureBox LeftPicture, RightPicture;
         Snake LSnake, RSnake;
         public bool ok = true;
-
+        int Score;
         public SnakeControl(PictureBox leftField, PictureBox rightField, int SpeedLeft, int SpeedRight)
         {
+            Score = 0;
+
             LeftPicture = leftField;
             RightPicture = rightField;
             LSnake = new Snake();
+            RSnake = new Snake();
 
             LeftSpeed = 1000;
             RightSpeed = 1000;
 
             LeftSpeed /= SpeedLeft;
-            SpeedRight /= SpeedRight;
+            RightSpeed /= SpeedRight;
+
+            
         }
 
 
         #region Отображение
+        static object LockMarker = new object();
         static PictureBox DrawSnake(PictureBox pictureBox, Snake snake)
         {
-            Graphics draw = pictureBox.CreateGraphics();
-
-            draw.DrawRectangle(GreenPen, snake.Body[0].Segment);
-            draw.FillRectangle(SnakeHead, snake.Body[0].Segment);
-
-            for (int i = 1; i < snake.Body.Count; i++)
+            lock(LockMarker)
             {
-                draw.DrawRectangle(BlackPen, snake.Body[i].Segment);
-                draw.FillRectangle(SnakeBody, snake.Body[i].Segment);
+                Graphics draw = pictureBox.CreateGraphics();
+
+                draw.DrawRectangle(GreenPen, snake.Body[0].Segment);
+                draw.FillRectangle(SnakeHead, snake.Body[0].Segment);
+
+                for (int i = 1; i < snake.Body.Count; i++)
+                {
+                    draw.DrawRectangle(BlackPen, snake.Body[i].Segment);
+                    draw.FillRectangle(SnakeBody, snake.Body[i].Segment);
+                }
+                draw.Dispose();
+                return pictureBox;
             }
-            draw.Dispose();
-            return pictureBox;
         }
         static PictureBox EraseSnake(PictureBox pictureBox, Snake snake)
         {
-            Graphics draw = pictureBox.CreateGraphics();
+            lock (LockMarker)
+            {
+                Graphics draw = pictureBox.CreateGraphics();
 
-            draw.DrawRectangle(Pens.White, snake.Body[snake.Body.Count - 1].Segment);
-            draw.FillRectangle(Brushes.White, snake.Body[snake.Body.Count - 1].Segment);
-            draw.Dispose();
-            return pictureBox;
-
+                draw.DrawRectangle(Pens.White, snake.Body[snake.Body.Count - 1].Segment);
+                draw.FillRectangle(Brushes.White, snake.Body[snake.Body.Count - 1].Segment);
+                draw.Dispose();
+                return pictureBox;
+            }
         }
         #region
         public void DrawLeftSnake()
@@ -155,11 +166,22 @@ namespace Snake_a_snake
                 EraseLeftSnake();
                 LSnake.Move();
                 DrawLeftSnake();
+               
             }
-            //Thread a = Thread.CurrentThread;
-            //a.Abort();
+           
         }
-        
+        public void StartRightSnake(object data)
+        {
+            
+            while (ok)
+            {
+                Thread.Sleep(RightSpeed);
+                
+                EraseRightSnake();
+                RSnake.Move();
+                DrawRightSnake();
+            }
+        }
         #endregion
     }
 

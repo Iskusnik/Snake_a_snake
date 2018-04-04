@@ -33,17 +33,25 @@ namespace Snake_a_snake
 
             //System.Threading.Timer timer = new System.Threading.Timer(Snakes.StartLeftSnake, null, 0, Snakes.LeftSpeed);
 
-            int SpeedLeft  = (int)numericUpDownSpeed1.Value;
-            int SpeedRight = (int)numericUpDownSpeed2.Value;
+            int SpeedLeft  = 3*(int)numericUpDownSpeed1.Value;
+            int SpeedRight = 3*(int)numericUpDownSpeed2.Value;
             Snakes = new SnakeControl(pictureBoxSnake1, pictureBoxSnake2, SpeedLeft, SpeedRight);
 
             this.KeyDown += Snakes.LeftSnakeControl;
+            this.KeyDown += Snakes.RightSnakeControl;
 
-            Thread temp = new Thread(Snakes.StartLeftSnake);
-            temp.Name = "Управление";
-            temp.IsBackground = true;
-            temp.Priority = ThreadPriority.AboveNormal;
-            temp.Start();
+            Thread left = new Thread(Snakes.StartLeftSnake);
+            left.Name = "Прорисовка левой змеи";
+            left.IsBackground = true;
+            left.Priority = ThreadPriority.AboveNormal;
+            left.Start();
+
+
+            Thread right = new Thread(Snakes.StartRightSnake);
+            right.Name = "Прорисовка правой змеи";
+            right.IsBackground = true;
+            right.Priority = ThreadPriority.AboveNormal;
+            right.Start();
         }
 
         private void MainMenu_Load(object sender, EventArgs e)
