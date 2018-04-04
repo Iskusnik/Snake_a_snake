@@ -193,8 +193,9 @@
             this.buttonReset.Name = "buttonReset";
             this.buttonReset.Size = new System.Drawing.Size(86, 23);
             this.buttonReset.TabIndex = 12;
-            this.buttonReset.Text = "Заново";
+            this.buttonReset.Text = "Стоп";
             this.buttonReset.UseVisualStyleBackColor = true;
+            this.buttonReset.Click += new System.EventHandler(this.buttonReset_Click);
             // 
             // MainMenu
             // 
