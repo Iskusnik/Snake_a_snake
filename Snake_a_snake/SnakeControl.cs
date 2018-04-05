@@ -12,10 +12,12 @@ namespace Snake_a_snake
 {
     
     //Bitmap snake;
+    
     class SnakeControl
     {
 
-        public static AutoResetEvent waitHandle = new AutoResetEvent(false);
+        public static AutoResetEvent waitHandleLEFT = new AutoResetEvent(false);
+        public static AutoResetEvent waitHandleRIGHT = new AutoResetEvent(false);
 
         public static Pen GreenPen = new Pen(Color.ForestGreen, 0);
         public static Pen BlackPen = new Pen(Color.Black, 0);
@@ -24,7 +26,7 @@ namespace Snake_a_snake
         public int LeftSpeed, RightSpeed;
         PictureBox LeftPicture, RightPicture;
         Snake LSnake, RSnake;
-        public bool ok = true;
+        public static bool ok = true;
         int Score;
         public SnakeControl(PictureBox leftField, PictureBox rightField, int SpeedLeft, int SpeedRight)
         {
@@ -40,8 +42,6 @@ namespace Snake_a_snake
 
             LeftSpeed /= SpeedLeft;
             RightSpeed /= SpeedRight;
-
-            
         }
 
 
@@ -61,6 +61,9 @@ namespace Snake_a_snake
                     draw.DrawRectangle(BlackPen, snake.Body[i].Segment);
                     draw.FillRectangle(SnakeBody, snake.Body[i].Segment);
                 }
+
+                draw.FillRectangle(Brushes.Crimson, snake.Food.Segment);
+
                 draw.Dispose();
                 return pictureBox;
             }
@@ -77,6 +80,7 @@ namespace Snake_a_snake
                 return pictureBox;
             }
         }
+        
         #region
         public void DrawLeftSnake()
         {
@@ -166,9 +170,9 @@ namespace Snake_a_snake
                 EraseLeftSnake();
                 LSnake.Move();
                 DrawLeftSnake();
-               
             }
-           
+
+            Thread.CurrentThread.Abort();
         }
         public void StartRightSnake(object data)
         {
@@ -176,11 +180,23 @@ namespace Snake_a_snake
             while (ok)
             {
                 Thread.Sleep(RightSpeed);
-                
                 EraseRightSnake();
                 RSnake.Move();
                 DrawRightSnake();
             }
+
+            MessageBox.Show(string.Format("Счёт: {0}", Score), "Конец");
+            Thread.CurrentThread.Abort();
+        }
+
+        public void MakeLeftFood()
+        {
+            while (ok)
+            {
+                SnakeControl.waitHandleLEFT.WaitOne();
+                LSnake.Food = new SnakeFood(20);
+            }
+            Thread.CurrentThread.Abort();
         }
         #endregion
     }
@@ -193,7 +209,9 @@ namespace Snake_a_snake
         public enum Direction { Up = 0, Down = 1, Left = 2, Right = 3 };
         public int Way, tempWay;
         public List<SnakeSegment> Body;
-        
+        public SnakeFood Food;
+        public bool Full;
+
         public Snake()
         {
             int x = 40;
@@ -204,11 +222,18 @@ namespace Snake_a_snake
 
             for (int i = 0; i < 5; i++)
                 Body.Add(new SnakeSegment(x, y + i * 20, width));
+
+            Full = false;
+            Food = new SnakeFood(200, 200, width);
         }
+            
 
         public void Move()
         {
+            int x = Body[Body.Count - 1].Segment.X;
+            int y = Body[Body.Count - 1].Segment.Y;
             
+
             for (int i = Body.Count - 1; i > 0; i--)
             {
                 Body[i].Segment.X = Body[i - 1].Segment.X;
@@ -223,8 +248,28 @@ namespace Snake_a_snake
                 case (int)Direction.Right: Body[0].Right(); break;
             }
             
+            var collis = (from segm in Body where (segm.Segment.X == Body[0].Segment.X && segm.Segment.Y == Body[0].Segment.Y) select segm).ToList();
+            if (collis.Count > 1)
+                SnakeControl.ok = false;
+
+            if (Full)
+            {
+                this.Grow(x, y);
+                Full = false;
+            }
+
+
+            if (Food.Segment.X == Body[0].Segment.X && Food.Segment.Y == Body[0].Segment.Y)
+            {
+                Full = true;
+
+                SnakeControl.waitHandleLEFT.Set();
+            }
         }
-             
+        public void Grow(int x, int y)
+        {
+            Body.Add(new SnakeSegment(x, y, width));
+        }     
     }
 
     class SnakeSegment
@@ -259,6 +304,22 @@ namespace Snake_a_snake
             Segment.X += Segment.Width;
             if (Segment.X >= 300)
                 Segment.X = 0;
+        }
+    }
+    class SnakeFood
+    {
+        public Rectangle Segment;
+        public enum Move { Up = 0, Down = 1, Left = 2, Right = 3 };
+        static Random r = new Random();
+        public SnakeFood(int x, int y, int w)
+        {
+            Segment = new Rectangle(x, y, w, w);
+        }
+        public SnakeFood(int w)
+        {
+            int x = r.Next(0, 20) * w;
+            int y = r.Next(0, 15) * w;
+            Segment = new Rectangle(x, y, w, w);
         }
     }
 }

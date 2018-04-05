@@ -33,9 +33,13 @@ namespace Snake_a_snake
 
             //System.Threading.Timer timer = new System.Threading.Timer(Snakes.StartLeftSnake, null, 0, Snakes.LeftSpeed);
 
+            pictureBoxSnake1.Refresh();
+            pictureBoxSnake2.Refresh();
+
             int SpeedLeft  = 3*(int)numericUpDownSpeed1.Value;
             int SpeedRight = 3*(int)numericUpDownSpeed2.Value;
             Snakes = new SnakeControl(pictureBoxSnake1, pictureBoxSnake2, SpeedLeft, SpeedRight);
+            SnakeControl.ok = true;
 
             this.KeyDown += Snakes.LeftSnakeControl;
             this.KeyDown += Snakes.RightSnakeControl;
@@ -43,15 +47,24 @@ namespace Snake_a_snake
             Thread left = new Thread(Snakes.StartLeftSnake);
             left.Name = "Прорисовка левой змеи";
             left.IsBackground = true;
-            left.Priority = ThreadPriority.AboveNormal;
+            left.Priority = ThreadPriority.Normal;
             left.Start();
 
+            
+            Thread leftFood = new Thread(Snakes.MakeLeftFood);
+            leftFood.Name = "Еда для левой змеи";
+            leftFood.IsBackground = true;
+            leftFood.Priority = ThreadPriority.Highest;
+            leftFood.Start();
+
+            
 
             Thread right = new Thread(Snakes.StartRightSnake);
             right.Name = "Прорисовка правой змеи";
             right.IsBackground = true;
-            right.Priority = ThreadPriority.AboveNormal;
+            right.Priority = ThreadPriority.Normal;
             right.Start();
+            
         }
 
         private void MainMenu_Load(object sender, EventArgs e)
@@ -74,7 +87,7 @@ namespace Snake_a_snake
 
         private void buttonReset_Click(object sender, EventArgs e)
         {
-            Snakes.ok = false;
+            SnakeControl.ok = false;
         }
     }
 }
