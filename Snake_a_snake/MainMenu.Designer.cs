@@ -30,7 +30,6 @@
         {
             this.pictureBoxSnake1 = new System.Windows.Forms.PictureBox();
             this.pictureBoxSnake2 = new System.Windows.Forms.PictureBox();
-            this.checkBoxWall1 = new System.Windows.Forms.CheckBox();
             this.numericUpDownSpeed1 = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.textBoxScore1 = new System.Windows.Forms.TextBox();
@@ -38,13 +37,18 @@
             this.textBoxScore2 = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.numericUpDownSpeed2 = new System.Windows.Forms.NumericUpDown();
-            this.checkBoxWall2 = new System.Windows.Forms.CheckBox();
             this.buttonStart = new System.Windows.Forms.Button();
             this.buttonReset = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.RightMaxLenght = new System.Windows.Forms.NumericUpDown();
+            this.label4 = new System.Windows.Forms.Label();
+            this.LeftMaxLenght = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSnake1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSnake2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSpeed1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSpeed2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RightMaxLenght)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LeftMaxLenght)).BeginInit();
             this.SuspendLayout();
             // 
             // pictureBoxSnake1
@@ -67,18 +71,6 @@
             this.pictureBoxSnake2.TabIndex = 1;
             this.pictureBoxSnake2.TabStop = false;
             // 
-            // checkBoxWall1
-            // 
-            this.checkBoxWall1.AutoSize = true;
-            this.checkBoxWall1.Location = new System.Drawing.Point(12, 418);
-            this.checkBoxWall1.Name = "checkBoxWall1";
-            this.checkBoxWall1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBoxWall1.Size = new System.Drawing.Size(62, 17);
-            this.checkBoxWall1.TabIndex = 2;
-            this.checkBoxWall1.Text = "Стенка";
-            this.checkBoxWall1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxWall1.UseVisualStyleBackColor = true;
-            // 
             // numericUpDownSpeed1
             // 
             this.numericUpDownSpeed1.Location = new System.Drawing.Point(73, 445);
@@ -100,6 +92,7 @@
             0,
             0,
             0});
+            this.numericUpDownSpeed1.ValueChanged += new System.EventHandler(this.numericUpDownSpeed1_ValueChanged);
             // 
             // label1
             // 
@@ -112,7 +105,7 @@
             // 
             // textBoxScore1
             // 
-            this.textBoxScore1.Location = new System.Drawing.Point(227, 418);
+            this.textBoxScore1.Location = new System.Drawing.Point(12, 418);
             this.textBoxScore1.Name = "textBoxScore1";
             this.textBoxScore1.ReadOnly = true;
             this.textBoxScore1.Size = new System.Drawing.Size(85, 20);
@@ -165,18 +158,6 @@
             0,
             0});
             // 
-            // checkBoxWall2
-            // 
-            this.checkBoxWall2.AutoSize = true;
-            this.checkBoxWall2.Location = new System.Drawing.Point(410, 418);
-            this.checkBoxWall2.Name = "checkBoxWall2";
-            this.checkBoxWall2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBoxWall2.Size = new System.Drawing.Size(62, 17);
-            this.checkBoxWall2.TabIndex = 7;
-            this.checkBoxWall2.Text = "Стенка";
-            this.checkBoxWall2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxWall2.UseVisualStyleBackColor = true;
-            // 
             // buttonStart
             // 
             this.buttonStart.Location = new System.Drawing.Point(318, 39);
@@ -197,22 +178,76 @@
             this.buttonReset.UseVisualStyleBackColor = true;
             this.buttonReset.Click += new System.EventHandler(this.buttonReset_Click);
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(537, 447);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(117, 13);
+            this.label3.TabIndex = 16;
+            this.label3.Text = "Максимальная длина";
+            // 
+            // RightMaxLenght
+            // 
+            this.RightMaxLenght.Location = new System.Drawing.Point(660, 445);
+            this.RightMaxLenght.Minimum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.RightMaxLenght.Name = "RightMaxLenght";
+            this.RightMaxLenght.Size = new System.Drawing.Size(50, 20);
+            this.RightMaxLenght.TabIndex = 15;
+            this.RightMaxLenght.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(139, 447);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(117, 13);
+            this.label4.TabIndex = 14;
+            this.label4.Text = "Максимальная длина";
+            // 
+            // LeftMaxLenght
+            // 
+            this.LeftMaxLenght.Location = new System.Drawing.Point(262, 445);
+            this.LeftMaxLenght.Minimum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.LeftMaxLenght.Name = "LeftMaxLenght";
+            this.LeftMaxLenght.Size = new System.Drawing.Size(50, 20);
+            this.LeftMaxLenght.TabIndex = 13;
+            this.LeftMaxLenght.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            // 
             // MainMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(722, 475);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.RightMaxLenght);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.LeftMaxLenght);
             this.Controls.Add(this.buttonReset);
             this.Controls.Add(this.buttonStart);
             this.Controls.Add(this.textBoxScore2);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.numericUpDownSpeed2);
-            this.Controls.Add(this.checkBoxWall2);
             this.Controls.Add(this.textBoxSumScore);
             this.Controls.Add(this.textBoxScore1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.numericUpDownSpeed1);
-            this.Controls.Add(this.checkBoxWall1);
             this.Controls.Add(this.pictureBoxSnake2);
             this.Controls.Add(this.pictureBoxSnake1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -225,6 +260,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSnake2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSpeed1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSpeed2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RightMaxLenght)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LeftMaxLenght)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -234,7 +271,6 @@
 
         public System.Windows.Forms.PictureBox pictureBoxSnake1;
         public System.Windows.Forms.PictureBox pictureBoxSnake2;
-        public System.Windows.Forms.CheckBox checkBoxWall1;
         public System.Windows.Forms.NumericUpDown numericUpDownSpeed1;
         public System.Windows.Forms.Label label1;
         public System.Windows.Forms.TextBox textBoxScore1;
@@ -242,9 +278,12 @@
         public System.Windows.Forms.TextBox textBoxScore2;
         public System.Windows.Forms.Label label2;
         public System.Windows.Forms.NumericUpDown numericUpDownSpeed2;
-        public System.Windows.Forms.CheckBox checkBoxWall2;
         public System.Windows.Forms.Button buttonStart;
         public System.Windows.Forms.Button buttonReset;
+        public System.Windows.Forms.Label label3;
+        public System.Windows.Forms.NumericUpDown RightMaxLenght;
+        public System.Windows.Forms.Label label4;
+        public System.Windows.Forms.NumericUpDown LeftMaxLenght;
     }
 }
 

@@ -10,9 +10,6 @@ using System.Timers;
 
 namespace Snake_a_snake
 {
-    
-    //Bitmap snake;
-    
     class SnakeControl
     {
 
@@ -21,21 +18,24 @@ namespace Snake_a_snake
 
         public static Pen GreenPen = new Pen(Color.ForestGreen, 0);
         public static Pen BlackPen = new Pen(Color.Black, 0);
-        public static TextureBrush SnakeBody = new TextureBrush(Image.FromFile(@"C:\Users\IskusnikXD\Source\Repos\Snake_a_snake\Snake_a_snake\LEATHERSNAKE.jpeg"));
-        public static TextureBrush SnakeHead = new TextureBrush(Image.FromFile(@"C:\Users\IskusnikXD\Source\Repos\Snake_a_snake\Snake_a_snake\SNAKEHEAD.jpeg"));
+        //public static TextureBrush SnakeBody = new TextureBrush(Image.FromFile(@"C:\Users\IskusnikXD\Source\Repos\Snake_a_snake\Snake_a_snake\LEATHERSNAKE.jpeg"));
+        //public static TextureBrush SnakeHead = new TextureBrush(Image.FromFile(@"C:\Users\IskusnikXD\Source\Repos\Snake_a_snake\Snake_a_snake\SNAKEHEAD.jpeg"));
+        public static TextureBrush SnakeBody = new TextureBrush(Image.FromFile(@"LEATHERSNAKE.jpeg"));
+        public static TextureBrush SnakeHead = new TextureBrush(Image.FromFile(@"SNAKEHEAD.jpeg"));
         public int LeftSpeed, RightSpeed;
         PictureBox LeftPicture, RightPicture;
         Snake LSnake, RSnake;
         public static bool ok = true;
-        int Score;
-        public SnakeControl(PictureBox leftField, PictureBox rightField, int SpeedLeft, int SpeedRight)
+        public int lScore, rScore;
+        public SnakeControl(PictureBox leftField, PictureBox rightField, int SpeedLeft, int SpeedRight, int LengthLeft, int LengthRight)
         {
-            Score = 0;
+            lScore = 0;
+            rScore = 0;
 
             LeftPicture = leftField;
             RightPicture = rightField;
-            LSnake = new Snake();
-            RSnake = new Snake();
+            LSnake = new Snake(LengthLeft);
+            RSnake = new Snake(LengthRight);
 
             LeftSpeed = 1000;
             RightSpeed = 1000;
@@ -140,35 +140,19 @@ namespace Snake_a_snake
         #region Поток
         public void StartLeftSnake(object data)
         {
-            //1. Обработка KeyEvent (нажатие кнопки): 
-            //1.1 - изменение направления, 
-            //1.2 - проверка на столкновения, 
-            //1.3 - проверка на скушанье,
-            //1.4 - увеличение роста.
-
-            //Загнать в цикл???
-            //System.Timers.Timer timer = new System.Timers.Timer(100 / (int)form.numericUpDownSpeed1.Value);
-            //timer.Elapsed+=
-            //2. Таймер (?): 2.1. Истёк. 2.2. Движение.
-
-            //3. Стереть старую змейку.
-            //4. Нарисовать новую.
-            /* while (true)
-             { 
-                 Thread.Sleep(LeftSpeed);
-                 EraseLeftSnake();
-                 LSnake.Move();
-                 DrawLeftSnake();
-             }*/
-
-            //System.Timers.Timer timer = new System.Timers.Timer(LeftSpeed);
-            //timer.Elapsed += EraseLeftSnake(object sender, KeyEventArgs e);
+            
 
             while (ok)
             {
                 Thread.Sleep(LeftSpeed);
                 EraseLeftSnake();
                 LSnake.Move();
+                if (LSnake.Full)
+                {
+                    SnakeControl.waitHandleLEFT.Set();
+                    lScore += LSnake.Body.Count * 1000 / LeftSpeed;
+                    SnakeControl.waitHandleLEFT.WaitOne();
+                }
                 DrawLeftSnake();
             }
 
@@ -182,10 +166,16 @@ namespace Snake_a_snake
                 Thread.Sleep(RightSpeed);
                 EraseRightSnake();
                 RSnake.Move();
+                if (RSnake.Full)
+                {
+                    SnakeControl.waitHandleRIGHT.Set();
+                    rScore += RSnake.Body.Count * 1000 / RightSpeed;
+                    SnakeControl.waitHandleRIGHT.WaitOne();
+                }
                 DrawRightSnake();
             }
 
-            MessageBox.Show(string.Format("Счёт: {0}", Score), "Конец");
+            MessageBox.Show(string.Format("Счёт: {0}", lScore + rScore), "Конец");
             Thread.CurrentThread.Abort();
         }
 
@@ -194,135 +184,51 @@ namespace Snake_a_snake
             while (ok)
             {
                 SnakeControl.waitHandleLEFT.WaitOne();
-                LSnake.Food = new SnakeFood(20);
+                LSnake.Food = new SnakeFood(LSnake, 20);
+                SnakeControl.waitHandleLEFT.Set();
             }
             Thread.CurrentThread.Abort();
         }
+        public void MakeRightFood()
+        {
+            while (ok)
+            {
+                SnakeControl.waitHandleRIGHT.WaitOne();
+                RSnake.Food = new SnakeFood(RSnake, 20);
+                SnakeControl.waitHandleRIGHT.Set();
+            }
+            Thread.CurrentThread.Abort();
+        }
+
         #endregion
     }
 
-    class Snake
-    {
-
-        static int width = 20;
-
-        public enum Direction { Up = 0, Down = 1, Left = 2, Right = 3 };
-        public int Way, tempWay;
-        public List<SnakeSegment> Body;
-        public SnakeFood Food;
-        public bool Full;
-
-        public Snake()
-        {
-            int x = 40;
-            int y = 40;
-            Way = (int)Direction.Right;
-            tempWay = Way;
-            Body = new List<SnakeSegment>(100);
-
-            for (int i = 0; i < 5; i++)
-                Body.Add(new SnakeSegment(x, y + i * 20, width));
-
-            Full = false;
-            Food = new SnakeFood(200, 200, width);
-        }
-            
-
-        public void Move()
-        {
-            int x = Body[Body.Count - 1].Segment.X;
-            int y = Body[Body.Count - 1].Segment.Y;
-            
-
-            for (int i = Body.Count - 1; i > 0; i--)
-            {
-                Body[i].Segment.X = Body[i - 1].Segment.X;
-                Body[i].Segment.Y = Body[i - 1].Segment.Y;
-            }
-            Way = tempWay;
-            switch (Way)
-            {
-                case (int)Direction.Up:    Body[0].Up();    break;
-                case (int)Direction.Down:  Body[0].Down();  break;
-                case (int)Direction.Left:  Body[0].Left();  break;
-                case (int)Direction.Right: Body[0].Right(); break;
-            }
-            
-            var collis = (from segm in Body where (segm.Segment.X == Body[0].Segment.X && segm.Segment.Y == Body[0].Segment.Y) select segm).ToList();
-            if (collis.Count > 1)
-                SnakeControl.ok = false;
-
-            if (Full)
-            {
-                this.Grow(x, y);
-                Full = false;
-            }
-
-
-            if (Food.Segment.X == Body[0].Segment.X && Food.Segment.Y == Body[0].Segment.Y)
-            {
-                Full = true;
-
-                SnakeControl.waitHandleLEFT.Set();
-            }
-        }
-        public void Grow(int x, int y)
-        {
-            Body.Add(new SnakeSegment(x, y, width));
-        }     
-    }
-
-    class SnakeSegment
-    {
-        public Rectangle Segment;
-        public enum Move { Up = 0, Down = 1, Left = 2, Right = 3 };
-
-        public SnakeSegment(int x, int y, int w)
-        {
-            Segment = new Rectangle(x, y, w, w);
-        }
-        public void Up()
-        {
-            Segment.Y -= Segment.Width;
-            if (Segment.Y < 0)
-                Segment.Y = 380;
-        }
-        public void Left()
-        {
-            Segment.X -= Segment.Width;
-            if (Segment.X < 0)
-                Segment.X = 280;
-        }
-        public void Down()
-        {
-            Segment.Y += Segment.Width;
-            if (Segment.Y >= 400)
-                Segment.Y = 0;
-        }
-        public void Right()
-        {
-            Segment.X += Segment.Width;
-            if (Segment.X >= 300)
-                Segment.X = 0;
-        }
-    }
-    class SnakeFood
-    {
-        public Rectangle Segment;
-        public enum Move { Up = 0, Down = 1, Left = 2, Right = 3 };
-        static Random r = new Random();
-        public SnakeFood(int x, int y, int w)
-        {
-            Segment = new Rectangle(x, y, w, w);
-        }
-        public SnakeFood(int w)
-        {
-            int x = r.Next(0, 20) * w;
-            int y = r.Next(0, 15) * w;
-            Segment = new Rectangle(x, y, w, w);
-        }
-    }
+    
 }
+
+//1. Обработка KeyEvent (нажатие кнопки): 
+//1.1 - изменение направления, 
+//1.2 - проверка на столкновения, 
+//1.3 - проверка на скушанье,
+//1.4 - увеличение роста.
+
+//Загнать в цикл???
+//System.Timers.Timer timer = new System.Timers.Timer(100 / (int)form.numericUpDownSpeed1.Value);
+//timer.Elapsed+=
+//2. Таймер (?): 2.1. Истёк. 2.2. Движение.
+
+//3. Стереть старую змейку.
+//4. Нарисовать новую.
+/* while (true)
+ { 
+     Thread.Sleep(LeftSpeed);
+     EraseLeftSnake();
+     LSnake.Move();
+     DrawLeftSnake();
+ }*/
+
+//System.Timers.Timer timer = new System.Timers.Timer(LeftSpeed);
+//timer.Elapsed += EraseLeftSnake(object sender, KeyEventArgs e);
 /*BITMAP - плохо
  * 
  * SnakeControl.waitHandle.WaitOne();
